@@ -10,7 +10,9 @@ Script to setup ec2 instances for `mdgspace`
 
 ## Usage
 
-1. Copy the content of `setup.sh`
-2. Run `nano setup.sh` in the server, paste the content and save
-3. Run `chmod +x setup.sh` to make the script executable
-4. Run `./setup.sh` to setup the server
+1. Download the setup script using one of the methods -
+    - Copy the content of `setup.sh`. Run `nano setup.sh` in the server, paste the content and save
+    - Run `wget https://raw.githubusercontent.com/mdgspace/server-setup/master/setup.sh`
+    - Run `curl -o setup.sh https://raw.githubusercontent.com/mdgspace/server-setup/master/setup.sh`
+2. Run `chmod +x setup.sh` to make the script executable
+3. Run `./setup.sh` to setup the server
