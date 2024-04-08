@@ -1,7 +1,7 @@
 echo "Execution started (config.sh)"
 
 # Constants
-webpage_path="/var/www/html/mdgspace.html"
+webpage_path="/var/www/html/index.html"
 
 # Prompt user for server name
 echo "server name:"
