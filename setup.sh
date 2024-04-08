@@ -8,6 +8,15 @@ echo "Execution started (config.sh)"
 # Constants
 webpage_path="/var/www/html/index.html"
 
+# Prompt for confirmation to run the script
+echo "Do you want to run the script? (yes/no)"
+read confirmation
+
+if [ "$confirmation" != "yes" ]; then
+    echo "Script execution cancelled"
+    exit 1
+fi
+
 # Prompt user for server name
 echo "server name:"
 read server_name
@@ -60,14 +69,14 @@ echo "Execution completed (install.sh)"
 # endregion scripts/install.sh
 
 # region scripts/zsh.sh
-custom_config_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/scripts/custom_config.zshrc"
-custom_config_path="$HOME/.zshrc"
+custom_config_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/custom_config.zshrc"
+config_path="$HOME/.zshrc"
 custom_config="$HOME/custom_config.zshrc"
 
 wget -O $custom_config $custom_config_url
-chmod +x custom_config
+chmod +x $custom_config
 
-echo "source custom_config" | sudo tee -a "$custom_config_path" > /dev/null
+echo "source $custom_config" | sudo tee -a "$config_path" > /dev/null
 # endregion scripts/zsh.sh
 
 # region scripts/webpage.sh
