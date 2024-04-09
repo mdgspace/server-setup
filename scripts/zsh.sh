@@ -2,8 +2,8 @@ echo "Execution started (zsh.sh)"
 
 # Installing zsh and oh my zsh
 sudo apt install zsh
-curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
-chsh -s $(which zsh)
+sudo chsh -s $(which zsh) ubuntu
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # zsh config
 custom_config_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/custom_config.zshrc"
