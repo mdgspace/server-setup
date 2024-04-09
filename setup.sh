@@ -101,5 +101,19 @@ echo "$modified_html_content" | sudo tee "$webpage_path" > /dev/null
 echo "Webpage created at $webpage_path"
 # endregion scripts/webpage.sh
 
+# region scripts/banner.sh
+url="https://raw.githubusercontent.com/mdgspace/server-map/main/banner.sh"
+response=$(curl -s $url)
+
+# Delete first line "$server_name" variable
+modified_response=$(echo "$response" | sed '1d')
+
+output=$(eval "$modified_response")
+
+echo "$output" > /etc/ssh/banner.txt
+
+echo "Banner /etc/ssh/banner.txt" | sudo tee "/etc/ssh/sshd_config" > /dev/null
+# endregion scripts/banner.sh
+
 
 echo "Execution completed (main.sh)"
