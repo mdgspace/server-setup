@@ -8,4 +8,4 @@ output=$(eval "$modified_response")
 
 echo "$output" > /etc/ssh/banner.txt
 
-echo "Banner /etc/ssh/banner.txt" | sudo tee "/etc/ssh/sshd_config" > /dev/null
+echo "Banner /etc/ssh/banner.txt" | sudo tee -a "/etc/ssh/sshd_config" >> /dev/null

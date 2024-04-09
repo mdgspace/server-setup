@@ -11,6 +11,6 @@ config_path="$HOME/.zshrc"
 custom_config="$HOME/custom_config.zshrc"
 wget -O $custom_config $custom_config_url
 chmod +x $custom_config
-echo "source $custom_config" | sudo tee -a "$config_path" > /dev/null
+echo "source $custom_config" | sudo tee -a "$config_path" >> /dev/null
 
 echo "Execution completed (zsh.sh)"

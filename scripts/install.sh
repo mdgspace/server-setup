@@ -35,7 +35,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 sudo apt install nginx -y
 
 # Certbot
-sudo snap install --classic certbot -y
+sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
 
 echo "Execution completed (install.sh)"
