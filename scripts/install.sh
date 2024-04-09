@@ -7,6 +7,8 @@ sudo apt upgrade -y
 # Utilities
 sudo apt install coreutils -y
 sudo apt install build-essential -y
+sudo apt install wget
+sudo apt install curl
 
 # Snapd
 sudo apt install snapd -y
