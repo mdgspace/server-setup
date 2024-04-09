@@ -6,6 +6,6 @@ modified_response=$(echo "$response" | sed '1d')
 
 output=$(eval "$modified_response")
 
-echo "$output" > /etc/ssh/banner.txt
+echo "$output" | sudo tee "/etc/ssh/banner.txt" >> /dev/null
 
 echo "Banner /etc/ssh/banner.txt" | sudo tee -a "/etc/ssh/sshd_config" >> /dev/null
