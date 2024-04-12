@@ -1,12 +1,11 @@
 #!/bin/bash
 
-echo "Execution started (main.sh)"
-
 # region scripts/config.sh
-echo "Execution started (config.sh)"
-
 # Constants
 webpage_path="/var/www/html/index.html"
+html_page_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/index.html"
+custom_config_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/custom_config.zshrc"
+banner_url="https://raw.githubusercontent.com/mdgspace/server-map/main/banner.sh"
 
 # Prompt for confirmation to run the script
 echo "Do you want to run the script? (yes/no)"
@@ -23,13 +22,9 @@ read server_name
 
 # Enable sudo
 sudo echo "sudo enabled"
-
-echo "Execution completed (config.sh)"
 # endregion scripts/config.sh
 
 # region scripts/install.sh
-echo "Execution started (install.sh)"
-
 # Update and upgrade the system
 sudo apt update -y
 sudo apt upgrade -y
@@ -67,31 +62,23 @@ sudo apt install nginx -y
 # Certbot
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
-
-echo "Execution completed (install.sh)"
 # endregion scripts/install.sh
 
 # region scripts/zsh.sh
-echo "Execution started (zsh.sh)"
-
 # Installing zsh and oh my zsh
 sudo apt install zsh
 sudo chsh -s $(which zsh) ubuntu
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # zsh config
-custom_config_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/custom_config.zshrc"
 config_path="$HOME/.zshrc"
 custom_config="$HOME/custom_config.zshrc"
 wget -O $custom_config $custom_config_url
 chmod +x $custom_config
 echo "source $custom_config" | sudo tee -a "$config_path" >> /dev/null
-
-echo "Execution completed (zsh.sh)"# endregion scripts/zsh.sh
+# endregion scripts/zsh.sh
 
 # region scripts/webpage.sh
-html_page_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/index.html"
-
 html_content=$(curl -s $html_page_url)
 
 modified_html_content=$(echo "$html_content" | sed "s/<bold id=\"#name\"><\/bold>/<bold id=\"#name\">$server_name<\/bold>/g")
@@ -102,8 +89,7 @@ echo "Webpage created at $webpage_path"
 # endregion scripts/webpage.sh
 
 # region scripts/banner.sh
-url="https://raw.githubusercontent.com/mdgspace/server-map/main/banner.sh"
-response=$(curl -s $url)
+response=$(curl -s $banner_url)
 
 # Delete first line "$server_name" variable
 modified_response=$(echo "$response" | sed '1d')
@@ -115,5 +101,3 @@ echo "$output" | sudo tee "/etc/ssh/banner.txt" >> /dev/null
 echo "Banner /etc/ssh/banner.txt" | sudo tee -a "/etc/ssh/sshd_config" >> /dev/null
 # endregion scripts/banner.sh
 
-
-echo "Execution completed (main.sh)"

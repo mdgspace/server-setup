@@ -1,7 +1,8 @@
-echo "Execution started (config.sh)"
-
 # Constants
 webpage_path="/var/www/html/index.html"
+html_page_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/index.html"
+custom_config_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/custom_config.zshrc"
+banner_url="https://raw.githubusercontent.com/mdgspace/server-map/main/banner.sh"
 
 # Prompt for confirmation to run the script
 echo "Do you want to run the script? (yes/no)"
@@ -18,5 +19,3 @@ read server_name
 
 # Enable sudo
 sudo echo "sudo enabled"
-
-echo "Execution completed (config.sh)"

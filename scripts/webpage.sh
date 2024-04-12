@@ -1,5 +1,3 @@
-html_page_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/index.html"
-
 html_content=$(curl -s $html_page_url)
 
 modified_html_content=$(echo "$html_content" | sed "s/<bold id=\"#name\"><\/bold>/<bold id=\"#name\">$server_name<\/bold>/g")

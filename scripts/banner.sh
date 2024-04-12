@@ -1,5 +1,4 @@
-url="https://raw.githubusercontent.com/mdgspace/server-map/main/banner.sh"
-response=$(curl -s $url)
+response=$(curl -s $banner_url)
 
 # Delete first line "$server_name" variable
 modified_response=$(echo "$response" | sed '1d')

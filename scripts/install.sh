@@ -1,5 +1,3 @@
-echo "Execution started (install.sh)"
-
 # Update and upgrade the system
 sudo apt update -y
 sudo apt upgrade -y
@@ -37,5 +35,3 @@ sudo apt install nginx -y
 # Certbot
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
-
-echo "Execution completed (install.sh)"
