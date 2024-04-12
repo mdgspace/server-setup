@@ -5,8 +5,8 @@ sudo apt upgrade -y
 # Utilities
 sudo apt install coreutils -y
 sudo apt install build-essential -y
-sudo apt install wget
-sudo apt install curl
+sudo apt install wget -y
+sudo apt install curl -y
 sudo apt install figlet -y
 
 # Snapd
@@ -18,7 +18,7 @@ git config --global user.name "$server_name"
 
 # Docker
 sudo apt-get update -y
-sudo apt-get install ca-certificates curl -y
+sudo apt-get install ca-certificates -y
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
@@ -35,3 +35,4 @@ sudo apt install nginx -y
 # Certbot
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
+sudo certbot

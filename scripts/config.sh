@@ -1,6 +1,6 @@
 # Constants
 webpage_path="/var/www/html/index.html"
-html_page_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/index.html"
+webpage_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/index.html"
 custom_config_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/custom_config.zshrc"
 banner_url="https://raw.githubusercontent.com/mdgspace/server-map/main/banner.sh"
 
