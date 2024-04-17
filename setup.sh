@@ -62,25 +62,35 @@ sudo apt install nginx -y
 # Certbot
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
-sudo certbot
 # endregion scripts/install.sh
 
 # region scripts/iam.sh
 sudo usermod -aG docker $USER
-sudo adduser stargazers
-sudo usermod -aG docker stargazers
 
-# Copy the public key to the new user
-sudo mkdir /home/stargazers/.ssh
-sudo chown stargazers:stargazers /home/stargazers/.ssh
-sudo chmod 700 /home/stargazers/.ssh
+password=$(< /dev/urandom tr -dc '[:alnum:]' | head -c12)
+sudo adduser --disabled-password --gecos "" developers
+echo "developers:$password" | sudo chpasswd
+sudo usermod -aG docker developers
 
-echo "Provide the public key for non sudo user (stargazers)"
-read PUBLIC_KEY
+# Generate a new key pair
+ssh-keygen -t rsa -b 2048 -f temp_rsa_key -N ""
+PUBLIC_KEY=$(cat temp_rsa_key.pub)
+PRIVATE_KEY=$(cat temp_rsa_key)
 
-sudo sh -c "echo $PUBLIC_KEY >> /home/stargazers/.ssh/authorized_keys"
-sudo chown stargazers:stargazers /home/stargazers/.ssh/authorized_keys
-sudo chmod 600 /home/stargazers/.ssh/authorized_keys
+rm temp_rsa_key temp_rsa_key.pub
+
+sudo mkdir /home/developers/.ssh
+sudo chown developers:developers /home/developers/.ssh
+sudo chmod 700 /home/developers/.ssh
+
+echo "ssh info for developers (non root users):"
+echo "------Copy the following private key and save it in a secure place------"
+echo $PRIVATE_KEY
+echo "----------------------------------------------------------------------"
+
+sudo sh -c "echo $PUBLIC_KEY >> /home/developers/.ssh/authorized_keys"
+sudo chown developers:developers /home/developers/.ssh/authorized_keys
+sudo chmod 600 /home/developers/.ssh/authorized_keys
 # endregion scripts/iam.sh
 
 # region scripts/webpage.sh

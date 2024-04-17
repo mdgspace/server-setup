@@ -35,4 +35,3 @@ sudo apt install nginx -y
 # Certbot
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
-sudo certbot
