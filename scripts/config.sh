@@ -3,6 +3,7 @@ webpage_path="/var/www/html/index.html"
 webpage_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/index.html"
 banner_url="https://raw.githubusercontent.com/mdgspace/server-map/main/banner.sh"
 system_wide_bashrc="/etc/bash.bashrc"
+system_skel_bashrc="/etc/skel/.bashrc"
 aliases_path="/etc/.bash_aliases"
 aliases_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/aliases.sh"
 

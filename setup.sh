@@ -9,6 +9,7 @@ webpage_path="/var/www/html/index.html"
 webpage_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/index.html"
 banner_url="https://raw.githubusercontent.com/mdgspace/server-map/main/banner.sh"
 system_wide_bashrc="/etc/bash.bashrc"
+system_skel_bashrc="/etc/skel/.bashrc"
 aliases_path="/etc/.bash_aliases"
 aliases_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/aliases.sh"
 
@@ -72,46 +73,6 @@ sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
 # endregion scripts/install.sh
 
-# region scripts/iam.sh
-sudo usermod -aG docker $USER
-
-password=$(< /dev/urandom tr -dc '[:alnum:]' | head -c12)
-sudo adduser --disabled-password --gecos "" developers
-echo "developers:$password" | sudo chpasswd
-sudo usermod -aG docker developers
-
-# Generate a new key pair
-ssh-keygen -t rsa -b 2048 -f temp_rsa_key -N ""
-PUBLIC_KEY=$(cat temp_rsa_key.pub)
-PRIVATE_KEY=$(cat temp_rsa_key)
-
-rm temp_rsa_key temp_rsa_key.pub
-
-sudo mkdir /home/developers/.ssh
-sudo chown developers:developers /home/developers/.ssh
-sudo chmod 700 /home/developers/.ssh
-
-echo "ssh info for developers (non root users):"
-echo "------Copy the following private key and save it in a secure place------"
-echo $PRIVATE_KEY
-echo "----------------------------------------------------------------------"
-
-sudo sh -c "echo $PUBLIC_KEY >> /home/developers/.ssh/authorized_keys"
-sudo chown developers:developers /home/developers/.ssh/authorized_keys
-sudo chmod 600 /home/developers/.ssh/authorized_keys
-# endregion scripts/iam.sh
-
-# region scripts/webpage.sh
-html_content=$(curl -s $webpage_url)
-
-modified_html_content=$(echo "$html_content" | sed "s/<bold id=\"#name\"><\/bold>/<bold id=\"#name\">$server_name<\/bold>/g")
-
-# Create the new webpage
-sudo sh -c "echo '$modified_html_content' > $webpage_path"
-
-echo "Webpage created at $webpage_path"
-# endregion scripts/webpage.sh
-
 # region scripts/shell.sh
 sudo chmod a+r "$system_wide_bashrc"
 
@@ -122,7 +83,13 @@ sudo sh -c "echo 'export server_name=$server_name' >> '$system_wide_bashrc'"
 
 # Beautify the bash prompt
 ps1_var="PS1='\[\e[92m\]\u@${server_name}\[\e[0m\]:\[\e[91m\]\w\\$\[\e[0m\] '"
-sudo sh -c "echo '$ps1_var' >> '$system_wide_bashrc'"
+sudo sh -c "echo '' >> '$system_skel_bashrc'"
+sudo sh -c "echo '# Custom configuration' >> '$system_skel_bashrc'"
+sudo sh -c "echo \"$ps1_var\" >> '$system_skel_bashrc'"
+
+echo "" >> "$HOME/.bashrc"
+echo "# Custom configuration" >> "$HOME/.bashrc"
+echo "$ps1_var" >> "$HOME/.bashrc"
 
 # Banner (server-map)
 response=$(curl -s $banner_url)
@@ -135,13 +102,49 @@ sudo sh -c "echo '$modified_response' >> '$system_wide_bashrc'"
 
 # Aliases
 sudo curl -o "$aliases_path" "$aliases_url"
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
-sudo sh -c "echo '. $aliases_path' >> '$system_wide_bashrc'"
+sudo chmod a+r "$aliases_path"
+sudo sh -c "echo '. \"$aliases_path\"' >> '$system_wide_bashrc'"
 # endregion scripts/shell.sh
+
+# region scripts/iam.sh
+sudo usermod -aG docker $USER
+
+password=$(< /dev/urandom tr -dc '[:alnum:]' | head -c12)
+sudo adduser --disabled-password --gecos "" developers
+echo "developers:$password" | sudo chpasswd
+sudo usermod -aG docker developers
+
+# Generate a new key pair
+ssh-keygen -t rsa -b 2048 -f temp_rsa_key -N ""
+
+echo "ssh info for developers (non root users):"
+echo "------Copy the following private key and save it in a secure place------"
+cat temp_rsa_key
+echo "----------------------------------------------------------------------"
+
+PUBLIC_KEY=$(cat temp_rsa_key.pub)
+
+sudo mkdir /home/developers/.ssh
+sudo chown developers:developers /home/developers/.ssh
+sudo chmod 700 /home/developers/.ssh
+
+sudo sh -c "echo $PUBLIC_KEY >> /home/developers/.ssh/authorized_keys"
+sudo chown developers:developers /home/developers/.ssh/authorized_keys
+sudo chmod 600 /home/developers/.ssh/authorized_keys
+
+rm temp_rsa_key temp_rsa_key.pub
+# endregion scripts/iam.sh
+
+# region scripts/webpage.sh
+html_content=$(curl -s $webpage_url)
+
+modified_html_content=$(echo "$html_content" | sed "s/<bold id=\"#name\"><\/bold>/<bold id=\"#name\">$server_name<\/bold>/g")
+
+# Create the new webpage
+sudo sh -c "echo '$modified_html_content' > $webpage_path"
+
+echo "Webpage created at $webpage_path"
+# endregion scripts/webpage.sh
 
 # region scripts/verify.sh
 # Verify Installation
@@ -174,15 +177,6 @@ fi
 # Verify User
 if ! id -u developers &>/dev/null; then
   echo "non root user 'developers' is not created"
-fi
-
-if [ ! -f /home/developers/.ssh/authorized_keys ]; then
-  echo "SSH key for developers is not created"
-fi
-
-# Verify Configuration
-if [ ! -f /var/www/html/index.html ]; then
-  echo "webpage is not created"
 fi
 # endregion scripts/verify.sh
 

@@ -16,3 +16,5 @@ Script to setup ec2 instances for `mdgspace`
     - Run `curl -o setup.sh https://raw.githubusercontent.com/mdgspace/server-setup/master/setup.sh`
 2. Run `chmod +x setup.sh` to make the script executable
 3. Run `./setup.sh` to setup the server
+4. Remove the script and logs after inspecting the setup
+5. Logout and login again to apply the changes

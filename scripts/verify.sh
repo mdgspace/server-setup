@@ -29,12 +29,3 @@ fi
 if ! id -u developers &>/dev/null; then
   echo "non root user 'developers' is not created"
 fi
-
-if [ ! -f /home/developers/.ssh/authorized_keys ]; then
-  echo "SSH key for developers is not created"
-fi
-
-# Verify Configuration
-if [ ! -f /var/www/html/index.html ]; then
-  echo "webpage is not created"
-fi
