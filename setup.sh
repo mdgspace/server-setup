@@ -1,15 +1,19 @@
 #!/bin/bash
 
+# Redirect stdout and stderr to both console and log file
+exec > >(tee -i "setup.log") 2>&1
+
 # region scripts/config.sh
 # Constants
 webpage_path="/var/www/html/index.html"
 webpage_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/index.html"
-custom_config_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/custom_config.zshrc"
 banner_url="https://raw.githubusercontent.com/mdgspace/server-map/main/banner.sh"
+system_wide_bashrc="/etc/bash.bashrc"
+aliases_path="/etc/.bash_aliases"
+aliases_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/aliases.sh"
 
 # Prompt for confirmation to run the script
-echo "Do you want to run the script? (yes/no)"
-read confirmation
+read -p "Do you want to run the script? (yes/no) " confirmation
 
 if [ "$confirmation" != "yes" ]; then
     echo "Script execution cancelled"
@@ -17,8 +21,7 @@ if [ "$confirmation" != "yes" ]; then
 fi
 
 # Prompt user for server name
-echo "server name:"
-read server_name
+read -p "Enter server name: " server_name
 
 if [ -z "$server_name" ]; then
     echo "Server name cannot be empty"
@@ -27,10 +30,6 @@ fi
 
 # Enable sudo
 sudo echo "sudo enabled"
-
-# Beautify the terminal
-ps1_var="PS1='\[\e[92m\]\u@${server_name}\[\e[0m\]:\[\e[91m\]\w\\$\[\e[0m\] '"
-echo $ps1_var >> "$HOME/.bashrc"
 # endregion scripts/config.sh
 
 # region scripts/install.sh
@@ -113,12 +112,79 @@ sudo sh -c "echo '$modified_html_content' > $webpage_path"
 echo "Webpage created at $webpage_path"
 # endregion scripts/webpage.sh
 
-# region scripts/banner.sh
+# region scripts/shell.sh
+sudo chmod a+r "$system_wide_bashrc"
+
+sudo sh -c "echo '' >> '$system_wide_bashrc'"
+sudo sh -c "echo '# Custom configuration' >> '$system_wide_bashrc'"
+
+sudo sh -c "echo 'export server_name=$server_name' >> '$system_wide_bashrc'"
+
+# Beautify the bash prompt
+ps1_var="PS1='\[\e[92m\]\u@${server_name}\[\e[0m\]:\[\e[91m\]\w\\$\[\e[0m\] '"
+sudo sh -c "echo '$ps1_var' >> '$system_wide_bashrc'"
+
+# Banner (server-map)
 response=$(curl -s $banner_url)
 
-# Delete first line "$server_name" variable
-modified_response=$(echo "$response" | sed "1s/.*/server_name=$server_name/")
+# Delete first line ("$server_name" variable)
+modified_response=$(echo "$response" | sed "1d")
 
-echo "$modified_response" >> "$HOME/.bashrc"
-# endregion scripts/banner.sh
+sudo sh -c "echo '# Banner' >> '$system_wide_bashrc'"
+sudo sh -c "echo '$modified_response' >> '$system_wide_bashrc'"
 
+# Aliases
+sudo curl -o "$aliases_path" "$aliases_url"
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+sudo sh -c "echo '. $aliases_path' >> '$system_wide_bashrc'"
+# endregion scripts/shell.sh
+
+# region scripts/verify.sh
+# Verify Installation
+
+# snapd
+if ! command -v snap &> /dev/null; then
+  echo "snapd is not installed"
+fi
+
+# git
+if ! command -v git &> /dev/null; then
+  echo "git is not installed"
+fi
+
+# docker
+if ! command -v docker &> /dev/null; then
+  echo "docker is not installed"
+fi
+
+# nginx
+if ! command -v nginx &> /dev/null; then
+  echo "nginx is not installed"
+fi
+
+# certbot
+if ! command -v certbot &> /dev/null; then
+  echo "certbot is not installed"
+fi
+
+# Verify User
+if ! id -u developers &>/dev/null; then
+  echo "non root user 'developers' is not created"
+fi
+
+if [ ! -f /home/developers/.ssh/authorized_keys ]; then
+  echo "SSH key for developers is not created"
+fi
+
+# Verify Configuration
+if [ ! -f /var/www/html/index.html ]; then
+  echo "webpage is not created"
+fi
+# endregion scripts/verify.sh
+
+
+echo "Setup script executed successfully"

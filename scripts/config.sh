@@ -1,12 +1,13 @@
 # Constants
 webpage_path="/var/www/html/index.html"
 webpage_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/index.html"
-custom_config_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/custom_config.zshrc"
 banner_url="https://raw.githubusercontent.com/mdgspace/server-map/main/banner.sh"
+system_wide_bashrc="/etc/bash.bashrc"
+aliases_path="/etc/.bash_aliases"
+aliases_url="https://raw.githubusercontent.com/mdgspace/server-setup/master/downloads/aliases.sh"
 
 # Prompt for confirmation to run the script
-echo "Do you want to run the script? (yes/no)"
-read confirmation
+read -p "Do you want to run the script? (yes/no) " confirmation
 
 if [ "$confirmation" != "yes" ]; then
     echo "Script execution cancelled"
@@ -14,8 +15,7 @@ if [ "$confirmation" != "yes" ]; then
 fi
 
 # Prompt user for server name
-echo "server name:"
-read server_name
+read -p "Enter server name: " server_name
 
 if [ -z "$server_name" ]; then
     echo "Server name cannot be empty"
@@ -24,7 +24,3 @@ fi
 
 # Enable sudo
 sudo echo "sudo enabled"
-
-# Beautify the terminal
-ps1_var="PS1='\[\e[92m\]\u@${server_name}\[\e[0m\]:\[\e[91m\]\w\\$\[\e[0m\] '"
-echo $ps1_var >> "$HOME/.bashrc"
