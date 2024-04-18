@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Redirect stdout and stderr to both console and log file
+exec > >(tee -i "setup.log") 2>&1
+
 # region scripts/config.sh
 # Constants
 webpage_path="/var/www/html/index.html"
@@ -27,10 +30,6 @@ fi
 
 # Enable sudo
 sudo echo "sudo enabled"
-
-# Beautify the terminal
-ps1_var="PS1='\[\e[92m\]\u@${server_name}\[\e[0m\]:\[\e[91m\]\w\\$\[\e[0m\] '"
-echo $ps1_var >> "$HOME/.bashrc"
 # endregion scripts/config.sh
 
 # region scripts/install.sh
@@ -113,12 +112,67 @@ sudo sh -c "echo '$modified_html_content' > $webpage_path"
 echo "Webpage created at $webpage_path"
 # endregion scripts/webpage.sh
 
-# region scripts/banner.sh
+# region scripts/shell.sh
+echo "" >> "$HOME/.bashrc"
+echo "# Custom configuration" >> "$HOME/.bashrc"
+
+echo "export server_name=$server_name" >> "$HOME/.bashrc"
+
+# Beautify the bash prompt
+ps1_var="PS1='\[\e[92m\]\u@${server_name}\[\e[0m\]:\[\e[91m\]\w\\$\[\e[0m\] '"
+echo $ps1_var >> "$HOME/.bashrc"
+
+# Banner (server-map)
 response=$(curl -s $banner_url)
 
-# Delete first line "$server_name" variable
-modified_response=$(echo "$response" | sed "1s/.*/server_name=$server_name/")
+# Delete first line ("$server_name" variable)
+modified_response=$(echo "$response" | sed "1d")
 
 echo "$modified_response" >> "$HOME/.bashrc"
-# endregion scripts/banner.sh
+# endregion scripts/shell.sh
 
+# region scripts/verify.sh
+# Verify Installation
+
+# snapd
+if ! command -v snap &> /dev/null; then
+  echo "snapd is not installed"
+fi
+
+# git
+if ! command -v git &> /dev/null; then
+  echo "git is not installed"
+fi
+
+# docker
+if ! command -v docker &> /dev/null; then
+  echo "docker is not installed"
+fi
+
+# nginx
+if ! command -v nginx &> /dev/null; then
+  echo "nginx is not installed"
+fi
+
+# certbot
+if ! command -v certbot &> /dev/null; then
+  echo "certbot is not installed"
+fi
+
+# Verify User
+if ! id -u developers &>/dev/null; then
+  echo "non root user 'developers' is not created"
+fi
+
+if [ ! -f /home/developers/.ssh/authorized_keys ]; then
+  echo "SSH key for developers is not created"
+fi
+
+# Verify Configuration
+if [ ! -f /var/www/html/index.html ]; then
+  echo "webpage is not created"
+fi
+# endregion scripts/verify.sh
+
+
+echo "Setup script executed successfully"

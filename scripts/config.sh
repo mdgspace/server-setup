@@ -24,7 +24,3 @@ fi
 
 # Enable sudo
 sudo echo "sudo enabled"
-
-# Beautify the terminal
-ps1_var="PS1='\[\e[92m\]\u@${server_name}\[\e[0m\]:\[\e[91m\]\w\\$\[\e[0m\] '"
-echo $ps1_var >> "$HOME/.bashrc"
